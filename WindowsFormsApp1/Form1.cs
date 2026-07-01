@@ -13,6 +13,7 @@ namespace WindowsFormsApp1
         private TextBox textBoxDate;
         private Button buttonCurrent;
         private Button buttonArchive;
+        private Button buttonAbout;
         private ListBox listBoxResults;
         private Label labelStatus;
 
@@ -23,7 +24,7 @@ namespace WindowsFormsApp1
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | (SecurityProtocolType)3072;
 
             this.Text = "💵 Курсы валют ЦБ РФ (официальный API)";
-            this.Size = new Size(700, 700);
+            this.Size = new Size(750, 700);
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.StartPosition = FormStartPosition.CenterScreen;
@@ -37,7 +38,7 @@ namespace WindowsFormsApp1
             labelTitle = new Label();
             labelTitle.Text = "💵 Курсы валют Центрального Банка России";
             labelTitle.Location = new Point(20, 15);
-            labelTitle.Size = new Size(650, 30);
+            labelTitle.Size = new Size(700, 30);
             labelTitle.Font = new Font("Microsoft Sans Serif", 12, FontStyle.Bold);
             labelTitle.ForeColor = Color.DarkBlue;
 
@@ -61,7 +62,9 @@ namespace WindowsFormsApp1
             labelHint.Font = new Font("Microsoft Sans Serif", 8);
             labelHint.ForeColor = Color.Gray;
 
-            // КНОПКА АРХИВА
+            // ==========================================
+            // КНОПКА "АРХИВНЫЙ КУРС"
+            // ==========================================
             buttonArchive = new Button();
             buttonArchive.Text = "📅 Архивный курс";
             buttonArchive.Location = new Point(20, 90);
@@ -70,11 +73,33 @@ namespace WindowsFormsApp1
             buttonArchive.FlatStyle = FlatStyle.Flat;
             buttonArchive.Click += ButtonArchive_Click;
 
-            // КНОПКА ТЕКУЩИХ КУРСОВ
+            // ==========================================
+            // НОВАЯ КНОПКА "О ПРОГРАММЕ"
+            // ==========================================
+            buttonAbout = new Button();
+            buttonAbout.Text = "ℹ️ О программе";
+            buttonAbout.Location = new Point(180, 90);
+            buttonAbout.Size = new Size(120, 28);
+            buttonAbout.BackColor = Color.LightYellow;
+            buttonAbout.FlatStyle = FlatStyle.Flat;
+            buttonAbout.Click += (s, e) => {
+                MessageBox.Show(
+                    "Курсы валют ЦБ РФ\n" +
+                    "Версия: 1.0\n" +
+                    "Разработчик: Твое Имя\n" +
+                    "Группа: ИТ-101\n" +
+                    "Июнь 2026",
+                    "О программе",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+            };
+
+            // КНОПКА "ТЕКУЩИЕ КУРСЫ"
             buttonCurrent = new Button();
             buttonCurrent.Text = "💰 Текущие курсы валют";
             buttonCurrent.Location = new Point(20, 130);
-            buttonCurrent.Size = new Size(650, 35);
+            buttonCurrent.Size = new Size(700, 35);
             buttonCurrent.BackColor = Color.LightGreen;
             buttonCurrent.FlatStyle = FlatStyle.Flat;
             buttonCurrent.Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
@@ -84,13 +109,13 @@ namespace WindowsFormsApp1
             labelStatus = new Label();
             labelStatus.Text = "✅ Готов к работе";
             labelStatus.Location = new Point(20, 180);
-            labelStatus.Size = new Size(650, 20);
+            labelStatus.Size = new Size(700, 20);
             labelStatus.ForeColor = Color.Green;
 
             // СПИСОК РЕЗУЛЬТАТОВ
             listBoxResults = new ListBox();
             listBoxResults.Location = new Point(20, 210);
-            listBoxResults.Size = new Size(650, 440);
+            listBoxResults.Size = new Size(700, 440);
             listBoxResults.Font = new Font("Consolas", 9);
             listBoxResults.BackColor = Color.WhiteSmoke;
             listBoxResults.ScrollAlwaysVisible = true;
@@ -101,6 +126,7 @@ namespace WindowsFormsApp1
             this.Controls.Add(textBoxDate);
             this.Controls.Add(labelHint);
             this.Controls.Add(buttonArchive);
+            this.Controls.Add(buttonAbout);   // ← НОВАЯ КНОПКА
             this.Controls.Add(buttonCurrent);
             this.Controls.Add(labelStatus);
             this.Controls.Add(listBoxResults);
