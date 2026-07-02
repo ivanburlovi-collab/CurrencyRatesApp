@@ -77,8 +77,8 @@ namespace WindowsFormsApp1
                 MessageBox.Show(
                     "Currency Rates - Central Bank of Russia\n" +
                     "Version: 1.0\n" +
-                    "Developer: Burlov Ivan\n" +
-                    "Group: 1251\n" +
+                    "Developer: Your Name\n" +
+                    "Group: IT-101\n" +
                     "June 2026",
                     "About",
                     MessageBoxButtons.OK,
@@ -102,13 +102,10 @@ namespace WindowsFormsApp1
             labelStatus.Font = new Font("Segoe UI", 9);
             labelStatus.ForeColor = Color.Green;
 
-            // ============================================================
-            // ListBox - только код валюты, без русских названий
-            // ============================================================
             listBoxResults = new ListBox();
             listBoxResults.Location = new Point(20, 210);
             listBoxResults.Size = new Size(700, 440);
-            listBoxResults.Font = new Font("Consolas", 10); // Моноширинный шрифт
+            listBoxResults.Font = new Font("Segoe UI", 9);
             listBoxResults.BackColor = Color.WhiteSmoke;
             listBoxResults.ScrollAlwaysVisible = true;
 
@@ -125,9 +122,6 @@ namespace WindowsFormsApp1
             LoadCurrentRates();
         }
 
-        // ============================================================
-        // ЗАГРУЗКА ТЕКУЩИХ КУРСОВ
-        // ============================================================
         private void LoadCurrentRates()
         {
             listBoxResults.Items.Clear();
@@ -174,7 +168,6 @@ namespace WindowsFormsApp1
                             decimal rate = decimal.Parse(value,
                                 System.Globalization.CultureInfo.InvariantCulture);
 
-                            // ТОЛЬКО КОД ВАЛЮТЫ (БЕЗ РУССКИХ НАЗВАНИЙ)
                             string line = $"{charCode,-5} {rate,12:F4} RUB";
 
                             if (!string.IsNullOrEmpty(nominal) && nominal != "1")
@@ -187,6 +180,11 @@ namespace WindowsFormsApp1
                     }
 
                     listBoxResults.Items.Add("============================================================");
+
+                    // ============================================================
+                    // ЭКСПЕРИМЕНТАЛЬНАЯ ФУНКЦИЯ: ПОДСЧЕТ ВАЛЮТ
+                    // ============================================================
+                    listBoxResults.Items.Add($"TOTAL CURRENCIES: {neededCodes.Length}");
 
                     labelStatus.Text = $"Loaded: {DateTime.Now:HH:mm:ss}";
                     labelStatus.ForeColor = Color.Green;
@@ -207,9 +205,6 @@ namespace WindowsFormsApp1
             LoadCurrentRates();
         }
 
-        // ============================================================
-        // АРХИВНЫЙ КУРС
-        // ============================================================
         private void ButtonArchive_Click(object sender, EventArgs e)
         {
             string userDate = textBoxDate.Text.Trim();
@@ -287,9 +282,6 @@ namespace WindowsFormsApp1
             }
         }
 
-        // ============================================================
-        // ПАРСИНГ XML (АРХИВ)
-        // ============================================================
         private void ParseXmlAndDisplay(string userDate, string xml)
         {
             XmlDocument doc = new XmlDocument();
@@ -317,7 +309,6 @@ namespace WindowsFormsApp1
                     decimal rate = decimal.Parse(value,
                         System.Globalization.CultureInfo.InvariantCulture);
 
-                    // ТОЛЬКО КОД ВАЛЮТЫ
                     string line = $"{charCode,-5} {rate,12:F4} RUB";
 
                     if (!string.IsNullOrEmpty(nominal) && nominal != "1")
@@ -334,6 +325,13 @@ namespace WindowsFormsApp1
             {
                 listBoxResults.Items.Add("CURRENCIES NOT FOUND");
             }
+
+            listBoxResults.Items.Add("============================================================");
+
+            // ============================================================
+            // ЭКСПЕРИМЕНТАЛЬНАЯ ФУНКЦИЯ: ПОДСЧЕТ ВАЛЮТ В АРХИВЕ
+            // ============================================================
+            listBoxResults.Items.Add($"TOTAL CURRENCIES IN ARCHIVE: {found}");
 
             listBoxResults.Items.Add("============================================================");
         }
