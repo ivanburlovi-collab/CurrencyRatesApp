@@ -19,11 +19,10 @@ namespace WindowsFormsApp1
 
         public Form1()
         {
-            // Включаем TLS 1.2
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | (SecurityProtocolType)3072;
 
-            this.Text = "💵 Курсы валют ЦБ РФ (официальный API)";
+            this.Text = "Currency Rates - Central Bank of Russia";
             this.Size = new Size(750, 700);
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -34,117 +33,107 @@ namespace WindowsFormsApp1
 
         private void InitializeComponents()
         {
-            // ЗАГОЛОВОК
             labelTitle = new Label();
-            labelTitle.Text = "💵 Курсы валют Центрального Банка России";
+            labelTitle.Text = "Currency Rates - Central Bank of Russia";
             labelTitle.Location = new Point(20, 15);
             labelTitle.Size = new Size(700, 30);
-            labelTitle.Font = new Font("Microsoft Sans Serif", 12, FontStyle.Bold);
+            labelTitle.Font = new Font("Segoe UI", 12, FontStyle.Bold);
             labelTitle.ForeColor = Color.DarkBlue;
 
-            // ДАТА
             Label labelDateText = new Label();
-            labelDateText.Text = "Дата архива (ДД.ММ.ГГГГ):";
+            labelDateText.Text = "Archive Date (DD.MM.YYYY):";
             labelDateText.Location = new Point(20, 55);
             labelDateText.Size = new Size(180, 20);
-            labelDateText.Font = new Font("Microsoft Sans Serif", 9);
+            labelDateText.Font = new Font("Segoe UI", 9);
 
             textBoxDate = new TextBox();
             textBoxDate.Location = new Point(210, 52);
             textBoxDate.Size = new Size(150, 22);
             textBoxDate.Text = DateTime.Now.ToString("dd.MM.yyyy");
-            textBoxDate.Font = new Font("Microsoft Sans Serif", 9);
+            textBoxDate.Font = new Font("Segoe UI", 9);
 
             Label labelHint = new Label();
-            labelHint.Text = "например: 25.12.2025";
+            labelHint.Text = "example: 25.12.2025";
             labelHint.Location = new Point(370, 55);
             labelHint.Size = new Size(120, 20);
-            labelHint.Font = new Font("Microsoft Sans Serif", 8);
+            labelHint.Font = new Font("Segoe UI", 8);
             labelHint.ForeColor = Color.Gray;
 
-            // ==========================================
-            // КНОПКА "АРХИВНЫЙ КУРС"
-            // ==========================================
             buttonArchive = new Button();
-            buttonArchive.Text = "📅 Архивный курс";
+            buttonArchive.Text = "Archive Rate";
             buttonArchive.Location = new Point(20, 90);
             buttonArchive.Size = new Size(150, 28);
             buttonArchive.BackColor = Color.LightBlue;
             buttonArchive.FlatStyle = FlatStyle.Flat;
             buttonArchive.Click += ButtonArchive_Click;
 
-            // ==========================================
-            // НОВАЯ КНОПКА "О ПРОГРАММЕ"
-            // ==========================================
             buttonAbout = new Button();
-            buttonAbout.Text = "ℹ️ О программе";
+            buttonAbout.Text = "About";
             buttonAbout.Location = new Point(180, 90);
-            buttonAbout.Size = new Size(120, 28);
+            buttonAbout.Size = new Size(100, 28);
             buttonAbout.BackColor = Color.LightYellow;
             buttonAbout.FlatStyle = FlatStyle.Flat;
             buttonAbout.Click += (s, e) => {
                 MessageBox.Show(
-                    "Курсы валют ЦБ РФ\n" +
-                    "Версия: 1.0\n" +
-                    "Разработчик: Твое Имя\n" +
-                    "Группа: ИТ-101\n" +
-                    "Июнь 2026",
-                    "О программе",
+                    "Currency Rates - Central Bank of Russia\n" +
+                    "Version: 1.0\n" +
+                    "Developer: Burlov Ivan\n" +
+                    "Group: 1251\n" +
+                    "June 2026",
+                    "About",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information
                 );
             };
 
-            // КНОПКА "ТЕКУЩИЕ КУРСЫ"
             buttonCurrent = new Button();
-            buttonCurrent.Text = "💰 Текущие курсы валют";
+            buttonCurrent.Text = "Current Rates";
             buttonCurrent.Location = new Point(20, 130);
             buttonCurrent.Size = new Size(700, 35);
             buttonCurrent.BackColor = Color.LightGreen;
             buttonCurrent.FlatStyle = FlatStyle.Flat;
-            buttonCurrent.Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
+            buttonCurrent.Font = new Font("Segoe UI", 10, FontStyle.Bold);
             buttonCurrent.Click += ButtonCurrent_Click;
 
-            // СТАТУС
             labelStatus = new Label();
-            labelStatus.Text = "✅ Готов к работе";
+            labelStatus.Text = "Ready";
             labelStatus.Location = new Point(20, 180);
             labelStatus.Size = new Size(700, 20);
+            labelStatus.Font = new Font("Segoe UI", 9);
             labelStatus.ForeColor = Color.Green;
 
-            // СПИСОК РЕЗУЛЬТАТОВ
+            // ============================================================
+            // ListBox - только код валюты, без русских названий
+            // ============================================================
             listBoxResults = new ListBox();
             listBoxResults.Location = new Point(20, 210);
             listBoxResults.Size = new Size(700, 440);
-            listBoxResults.Font = new Font("Consolas", 9);
+            listBoxResults.Font = new Font("Consolas", 10); // Моноширинный шрифт
             listBoxResults.BackColor = Color.WhiteSmoke;
             listBoxResults.ScrollAlwaysVisible = true;
 
-            // ДОБАВЛЯЕМ ВСЕ НА ФОРМУ
             this.Controls.Add(labelTitle);
             this.Controls.Add(labelDateText);
             this.Controls.Add(textBoxDate);
             this.Controls.Add(labelHint);
             this.Controls.Add(buttonArchive);
-            this.Controls.Add(buttonAbout);   // ← НОВАЯ КНОПКА
+            this.Controls.Add(buttonAbout);
             this.Controls.Add(buttonCurrent);
             this.Controls.Add(labelStatus);
             this.Controls.Add(listBoxResults);
 
-            // АВТОЗАГРУЗКА ПРИ СТАРТЕ
             LoadCurrentRates();
         }
 
         // ============================================================
-        // 1️⃣ ЗАГРУЗКА ТЕКУЩИХ КУРСОВ (XML)
+        // ЗАГРУЗКА ТЕКУЩИХ КУРСОВ
         // ============================================================
         private void LoadCurrentRates()
         {
             listBoxResults.Items.Clear();
-            labelStatus.Text = "⏳ Загрузка...";
+            labelStatus.Text = "Loading...";
             labelStatus.ForeColor = Color.Blue;
 
-            // Официальный API ЦБ РФ
             string url = "https://www.cbr.ru/scripts/XML_daily.asp";
 
             using (WebClient client = new WebClient())
@@ -156,25 +145,20 @@ namespace WindowsFormsApp1
 
                     string xml = client.DownloadString(url);
 
-                    // Парсим XML
                     XmlDocument doc = new XmlDocument();
                     doc.LoadXml(xml);
 
-                    // Получаем дату
                     string dateStr = doc.DocumentElement.GetAttribute("Date");
                     DateTime date = DateTime.ParseExact(dateStr, "dd.MM.yyyy",
                         System.Globalization.CultureInfo.InvariantCulture);
 
-                    listBoxResults.Items.Add("╔═══════════════════════════════════════════════════════════════╗");
-                    listBoxResults.Items.Add("║              💵 ТЕКУЩИЕ КУРСЫ ВАЛЮТ ЦБ РФ                    ║");
-                    listBoxResults.Items.Add("╠═══════════════════════════════════════════════════════════════╣");
-                    listBoxResults.Items.Add($"║ Дата: {date:dd.MM.yyyy}                                          ║");
-                    listBoxResults.Items.Add("╠═══════════════════════════════════════════════════════════════╣");
+                    listBoxResults.Items.Add("============================================================");
+                    listBoxResults.Items.Add("         CURRENT RATES - CENTRAL BANK OF RUSSIA");
+                    listBoxResults.Items.Add("============================================================");
+                    listBoxResults.Items.Add($"Date: {date:dd.MM.yyyy}");
+                    listBoxResults.Items.Add("------------------------------------------------------------");
 
-                    // Получаем все валюты
                     XmlNodeList valutes = doc.GetElementsByTagName("Valute");
-
-                    // Список нужных валют
                     string[] neededCodes = { "USD", "EUR", "CNY", "GBP", "BYN", "JPY", "KZT", "UAH", "TRY", "CHF" };
 
                     foreach (XmlNode valute in valutes)
@@ -183,49 +167,48 @@ namespace WindowsFormsApp1
 
                         if (Array.Exists(neededCodes, code => code == charCode))
                         {
-                            string name = valute.SelectSingleNode("Name")?.InnerText;
                             string value = valute.SelectSingleNode("Value")?.InnerText;
                             string nominal = valute.SelectSingleNode("Nominal")?.InnerText;
 
-                            // Заменяем запятую на точку
                             value = value.Replace(',', '.');
                             decimal rate = decimal.Parse(value,
                                 System.Globalization.CultureInfo.InvariantCulture);
 
-                            listBoxResults.Items.Add($"║ {charCode,-3} {name,-25} {rate,12:F4} руб. ║");
+                            // ТОЛЬКО КОД ВАЛЮТЫ (БЕЗ РУССКИХ НАЗВАНИЙ)
+                            string line = $"{charCode,-5} {rate,12:F4} RUB";
+
                             if (!string.IsNullOrEmpty(nominal) && nominal != "1")
                             {
-                                listBoxResults.Items.Add($"║    (за {nominal} единиц)                                ║");
+                                line += $" (per {nominal} units)";
                             }
+
+                            listBoxResults.Items.Add(line);
                         }
                     }
 
-                    listBoxResults.Items.Add("╚═══════════════════════════════════════════════════════════════╝");
+                    listBoxResults.Items.Add("============================================================");
 
-                    labelStatus.Text = $"✅ Загружено: {DateTime.Now:HH:mm:ss}";
+                    labelStatus.Text = $"Loaded: {DateTime.Now:HH:mm:ss}";
                     labelStatus.ForeColor = Color.Green;
                 }
                 catch (Exception ex)
                 {
-                    listBoxResults.Items.Add($"❌ ОШИБКА: {ex.Message}");
-                    labelStatus.Text = "❌ Ошибка загрузки";
+                    listBoxResults.Items.Add($"ERROR: {ex.Message}");
+                    labelStatus.Text = "Error loading";
                     labelStatus.ForeColor = Color.Red;
-                    MessageBox.Show($"Не удалось загрузить курсы:\n{ex.Message}",
-                                  "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Failed to load rates:\n{ex.Message}",
+                                  "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
-        // ============================================================
-        // 2️⃣ КНОПКА: ТЕКУЩИЕ КУРСЫ
-        // ============================================================
         private void ButtonCurrent_Click(object sender, EventArgs e)
         {
             LoadCurrentRates();
         }
 
         // ============================================================
-        // 3️⃣ КНОПКА: АРХИВНЫЙ КУРС
+        // АРХИВНЫЙ КУРС
         // ============================================================
         private void ButtonArchive_Click(object sender, EventArgs e)
         {
@@ -233,12 +216,11 @@ namespace WindowsFormsApp1
 
             if (string.IsNullOrEmpty(userDate))
             {
-                MessageBox.Show("Введите дату в формате ДД.ММ.ГГГГ!", "Ошибка",
+                MessageBox.Show("Enter date in DD.MM.YYYY format!", "Error",
                               MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Проверяем формат даты
             DateTime date;
             try
             {
@@ -247,17 +229,16 @@ namespace WindowsFormsApp1
             }
             catch
             {
-                MessageBox.Show("Неверный формат!\nИспользуйте: ДД.ММ.ГГГГ\nНапример: 25.12.2025",
-                              "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Invalid format!\nUse: DD.MM.YYYY\nExample: 25.12.2025",
+                              "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             listBoxResults.Items.Clear();
-            labelStatus.Text = $"⏳ Загрузка {userDate}...";
+            labelStatus.Text = $"Loading {userDate}...";
             labelStatus.ForeColor = Color.Blue;
             buttonArchive.Enabled = false;
 
-            // Официальный API ЦБ РФ с указанием даты
             string url = $"https://www.cbr.ru/scripts/XML_daily.asp?date_req={userDate}";
 
             using (WebClient client = new WebClient())
@@ -269,45 +250,34 @@ namespace WindowsFormsApp1
 
                     string xml = client.DownloadString(url);
 
-                    // Проверяем, есть ли данные
                     if (xml.Contains("<ValCurs") && xml.Contains("<Valute"))
                     {
                         ParseXmlAndDisplay(userDate, xml);
-                        labelStatus.Text = $"✅ Архив {userDate} загружен";
+                        labelStatus.Text = $"Archive {userDate} loaded";
                         labelStatus.ForeColor = Color.Green;
                     }
                     else
                     {
-                        listBoxResults.Items.Add("╔═══════════════════════════════════════════════════════════════╗");
-                        listBoxResults.Items.Add($"║           ❌ ДАННЫХ ЗА {userDate} НЕТ                         ║");
-                        listBoxResults.Items.Add("╠═══════════════════════════════════════════════════════════════╣");
-                        listBoxResults.Items.Add("║    Возможные причины:                                          ║");
-                        listBoxResults.Items.Add("║    • Выходной или праздничный день                           ║");
-                        listBoxResults.Items.Add("║    • Дата слишком старая                                     ║");
-                        listBoxResults.Items.Add("║    • Ошибка в формате даты                                   ║");
-                        listBoxResults.Items.Add("╚═══════════════════════════════════════════════════════════════╝");
-                        labelStatus.Text = $"❌ Нет данных за {userDate}";
+                        listBoxResults.Items.Add("============================================================");
+                        listBoxResults.Items.Add($"           NO DATA FOR {userDate}");
+                        listBoxResults.Items.Add("============================================================");
+                        listBoxResults.Items.Add("Possible reasons:");
+                        listBoxResults.Items.Add("- Weekend or holiday");
+                        listBoxResults.Items.Add("- Date is too old");
+                        listBoxResults.Items.Add("- Invalid date format");
+                        listBoxResults.Items.Add("============================================================");
+                        labelStatus.Text = $"No data for {userDate}";
                         labelStatus.ForeColor = Color.Red;
                     }
                 }
-                catch (WebException ex)
-                {
-                    listBoxResults.Items.Add("╔═══════════════════════════════════════════════════════════════╗");
-                    listBoxResults.Items.Add($"║           ❌ ОШИБКА ПОДКЛЮЧЕНИЯ                              ║");
-                    listBoxResults.Items.Add("╠═══════════════════════════════════════════════════════════════╣");
-                    listBoxResults.Items.Add($"║    {ex.Message,-50} ║");
-                    listBoxResults.Items.Add("╚═══════════════════════════════════════════════════════════════╝");
-                    labelStatus.Text = "❌ Ошибка подключения";
-                    labelStatus.ForeColor = Color.Red;
-                }
                 catch (Exception ex)
                 {
-                    listBoxResults.Items.Add("╔═══════════════════════════════════════════════════════════════╗");
-                    listBoxResults.Items.Add("║           ❌ НЕИЗВЕСТНАЯ ОШИБКА                              ║");
-                    listBoxResults.Items.Add("╠═══════════════════════════════════════════════════════════════╣");
-                    listBoxResults.Items.Add($"║    {ex.Message,-50} ║");
-                    listBoxResults.Items.Add("╚═══════════════════════════════════════════════════════════════╝");
-                    labelStatus.Text = "❌ Ошибка";
+                    listBoxResults.Items.Add("============================================================");
+                    listBoxResults.Items.Add("           CONNECTION ERROR");
+                    listBoxResults.Items.Add("============================================================");
+                    listBoxResults.Items.Add(ex.Message);
+                    listBoxResults.Items.Add("============================================================");
+                    labelStatus.Text = "Connection error";
                     labelStatus.ForeColor = Color.Red;
                 }
                 finally
@@ -318,28 +288,28 @@ namespace WindowsFormsApp1
         }
 
         // ============================================================
-        // 4️⃣ ПАРСИНГ XML И ОТОБРАЖЕНИЕ
+        // ПАРСИНГ XML (АРХИВ)
         // ============================================================
         private void ParseXmlAndDisplay(string userDate, string xml)
         {
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(xml);
 
-            listBoxResults.Items.Add("╔═══════════════════════════════════════════════════════════════╗");
-            listBoxResults.Items.Add($"║           📅 АРХИВНЫЙ КУРС ЗА {userDate}                       ║");
-            listBoxResults.Items.Add("╠═══════════════════════════════════════════════════════════════╣");
+            listBoxResults.Items.Add("============================================================");
+            listBoxResults.Items.Add($"         ARCHIVE RATE FOR {userDate}");
+            listBoxResults.Items.Add("============================================================");
 
             XmlNodeList valutes = doc.GetElementsByTagName("Valute");
             string[] neededCodes = { "USD", "EUR", "CNY", "GBP", "BYN", "JPY", "KZT" };
 
             int found = 0;
+
             foreach (XmlNode valute in valutes)
             {
                 string charCode = valute.SelectSingleNode("CharCode")?.InnerText;
 
                 if (Array.Exists(neededCodes, code => code == charCode))
                 {
-                    string name = valute.SelectSingleNode("Name")?.InnerText;
                     string value = valute.SelectSingleNode("Value")?.InnerText;
                     string nominal = valute.SelectSingleNode("Nominal")?.InnerText;
 
@@ -347,21 +317,25 @@ namespace WindowsFormsApp1
                     decimal rate = decimal.Parse(value,
                         System.Globalization.CultureInfo.InvariantCulture);
 
-                    listBoxResults.Items.Add($"║ {charCode,-3} {name,-25} {rate,12:F4} руб. ║");
+                    // ТОЛЬКО КОД ВАЛЮТЫ
+                    string line = $"{charCode,-5} {rate,12:F4} RUB";
+
                     if (!string.IsNullOrEmpty(nominal) && nominal != "1")
                     {
-                        listBoxResults.Items.Add($"║    (за {nominal} единиц)                                ║");
+                        line += $" (per {nominal} units)";
                     }
+
+                    listBoxResults.Items.Add(line);
                     found++;
                 }
             }
 
             if (found == 0)
             {
-                listBoxResults.Items.Add("║    ❌ ВАЛЮТЫ НЕ НАЙДЕНЫ                                  ║");
+                listBoxResults.Items.Add("CURRENCIES NOT FOUND");
             }
 
-            listBoxResults.Items.Add("╚═══════════════════════════════════════════════════════════════╝");
+            listBoxResults.Items.Add("============================================================");
         }
     }
 }
