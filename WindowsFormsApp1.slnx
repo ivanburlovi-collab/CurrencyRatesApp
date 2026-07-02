@@ -1,3 +1,6 @@
 <Solution>
-  <Project Path="WindowsFormsApp1/WindowsFormsApp1.csproj" />
+  <Folder Name="/Элементы решения/">
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="WindowsFormsApp1/WindowsFormsApp1.csproj" Id="e1209bd5-0a87-4f60-af71-50cc1d9bc41d" />
 </Solution>
